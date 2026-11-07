@@ -56,6 +56,39 @@ func yield(field reflect.StructField, fieldValue reflect.Value) {
 	fmt.Println("\n  STRUCT TAGS")
 	fmt.Println("  ─────────────────────────────────────────────────")
 
+	if len(kvMpp) == 0 {
+		fmt.Println("  No tags defined")
+	}
+
+	for key, values := range kvMpp {
+		fmt.Printf("  %-12s : %s\n", key, strings.Join(values, ", "))
+	}
+
+	fmt.Println("────────────────────────────────────────────────────")
+
+	fmt.Print("  Runtime Value : ")
+
+	if fieldValue.IsValid() && fieldValue.CanInterface() {
+		fmt.Printf("%v\n", fieldValue.Interface())
+	} else {
+		fmt.Println("<not available - type metadata only>")
+	}
+
+	fmt.Println("────────────────────────────────────────────────────")
+}
+
+func test(v reflect.Type, instance reflect.Value) {
+	fmt.Println("\nInspecting:", v)
+
+	for i := 0; i < v.NumField(); i++ {
+		var fieldValue reflect.Value
+
+		if instance.IsValid() {
+			fieldValue = instance.Field(i)
+		}
+
+		yield(v.Field(i), fieldValue)
+	}
 }
 
 func main() {
